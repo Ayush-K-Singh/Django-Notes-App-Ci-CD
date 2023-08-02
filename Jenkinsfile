@@ -59,9 +59,9 @@ pipeline {
                     def gitCmd1 = 'rm -rf Django-Notes-App-Ci-CD'
                     def gitCmd2 = 'git clone https://github.com/Ayush-K-Singh/Django-Notes-App-Ci-CD.git'
                     sshagent(['ec2-server-key']) {
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.163.221 ${gitCmd1}"
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.163.221 ${gitCmd2}"
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.163.221 ${dockerCmd}"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.162.185 ${gitCmd1}"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.162.185 ${gitCmd2}"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.162.185 ${dockerCmd}"
                     }
                 }
             }
