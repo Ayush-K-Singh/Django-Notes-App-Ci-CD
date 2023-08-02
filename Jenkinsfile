@@ -54,7 +54,8 @@ pipeline {
         stage('deploy'){
             steps{
                 script{
-                    def dockerCmd = 'docker run -d -p 9000:8000 ayushkrsingh/my-repository:django-notes-app'
+                    // def dockerCmd = 'docker run -d -p 9000:8000 ayushkrsingh/my-repository:django-notes-app'
+                    def dockerCmd = 'docker-compose down && docker-compose up -d'
                     sshagent(['ec2-server-key']) {
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.163.221 ${dockerCmd}"
                     }
