@@ -55,7 +55,7 @@ pipeline {
             steps{
                 script{
                     // def dockerCmd = 'docker run -d -p 9000:8000 ayushkrsingh/my-repository:django-notes-app'
-                    def dockerCmd = 'docker-compose down && docker-compose up -d'
+                    def dockerCmd = 'cd Django-Notes-App-Ci-CD && docker-compose down && docker-compose up -d'
                     def gitCmd = 'git clone https://github.com/Ayush-K-Singh/Django-Notes-App-Ci-CD.git'
                     sshagent(['ec2-server-key']) {
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.163.221 ${gitCmd}"
