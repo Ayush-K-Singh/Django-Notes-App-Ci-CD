@@ -56,7 +56,7 @@ pipeline {
                 script{
                     def dockerCmd = 'docker run -d -p 9000:8000 ayushkrsingh/my-repository:django-notes-app'
                     sshagent(['ec2-server-key']) {
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@13.51.199.27 ${dockerCmd}"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.163.221 ${dockerCmd}"
                     }
                 }
             }
