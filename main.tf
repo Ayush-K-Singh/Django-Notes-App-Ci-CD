@@ -4,16 +4,10 @@ provider "aws" {
   secret_key = "5VLm5DtEFIX3xsF6KUj3/o0CX9jMS1Cd7XzHLGu5"
 }
 
-variable vpc_cidr_block {
-    default = "10.0.0.0/16"
-}
-variable subnet_cidr_block {
-    default = "10.0.0.0/24"
-}
-variable availability_zone {
-    default = "eu-north-1a"
-}
-# variable public_key_location {}
+variable vpc_cidr_block {}
+variable subnet_cidr_block {}
+variable availability_zone {}
+variable public_key_location {}
 
 resource "aws_vpc" "deployment-vpc" {
   cidr_block = var.vpc_cidr_block
@@ -116,10 +110,10 @@ output "aws_ec2_instance_ip" {
   value = aws_instance.deployment-ec2-instance.public_ip
 }
 
-# resource "aws_key_pair" "deployment-keypair" {
-#   key_name   = "deployment-keypair-cicd"
-#   public_key = file("id_rsa.pub")
-# }
+resource "aws_key_pair" "deployment-keypair" {
+  key_name   = "deployment-keypair-cicd"
+  public_key = file("id_rsa.pub")
+}
 
 resource "aws_instance" "deployment-ec2-instance" {
   ami           = data.aws_ami.deployment-amazon-linux-2.id
@@ -130,15 +124,13 @@ resource "aws_instance" "deployment-ec2-instance" {
   availability_zone = var.availability_zone
 
   associate_public_ip_address = true
-  key_name = "AWS-KeyPair"
+  key_name = aws_key_pair.deployment-keypair.key_name
 
   user_data = <<EOF
                     #!/bin/bash
                     sudo yum update -y && sudo yum install docker -y
                     sudo systemctl start docker
                     sudo usermod -aG docker ec2-user
-                    sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                    sudo chmod +x /usr/local/bin/docker-compose
                 EOF
 
   tags = {
