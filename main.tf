@@ -255,7 +255,7 @@ output "aws_ami_id" {
 }
 
 output "aws_ec2_instance_ip" {
-  value = aws_instance.deployment-ec2-instance.public_ip
+  value = aws_instance.deployment-ec2-instanc.public_ip
 }
 
 # resource "aws_key_pair" "deployment-keypair" {
@@ -263,7 +263,7 @@ output "aws_ec2_instance_ip" {
 #   public_key = file("id_rsa.pub")
 # }
 
-resource "aws_instance" "deployment-ec2-instance" {
+resource "aws_instance" "deployment-ec2-instanc" {
   ami           = data.aws_ami.deployment-amazon-linux-2.id
   instance_type = "t3.micro"
 
