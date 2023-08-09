@@ -82,7 +82,7 @@ pipeline {
                     // def dockerCmd = 'docker run -d -p 9000:8000 ayushkrsingh/my-repository:django-notes-app'
                     def dockerCmd = 'docker-compose --version'
                     def dockerCmd1 = 'cd Django-Notes-App-Ci-CD'
-                    def dockerCmd11 = 'docker-compose down'
+                    def dockerCmd11 = 'pwd && docker-compose down'
                     def dockerCmd2 = 'cd Django-Notes-App-Ci-CD && docker-compose up -d'
                     def gitCmd1 = 'rm -rf Django-Notes-App-Ci-CD'
                     def gitCmd2 = 'git clone https://github.com/Ayush-K-Singh/Django-Notes-App-Ci-CD.git'
