@@ -48,20 +48,41 @@ pipeline {
                 
         //     }
         // }
+        stage('provision'){
+            environment{
+                AWS_ACCESS_KEY_ID = credentials('jenkins_aws_access_key')
+                AWS_SECRET_ACCESS_ID = credentials('jenkins_aws_secret_key')
+            }
+            steps{
+                script{
+                    sh "terraform init"
+                    sh "terraform apply --auto-approve"
+                    AWS_EC2_PUBLIC_IP = sh(
+                        script: "terraform output aws_ec2_instance_ip"
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
 
 
 
         stage('deploy'){
             steps{
                 script{
+                    echo "Wait for instance"
+                    sleep(90)
+
+                    echo "Started deploying"
+                    
                     // def dockerCmd = 'docker run -d -p 9000:8000 ayushkrsingh/my-repository:django-notes-app'
                     def dockerCmd = 'cd Django-Notes-App-Ci-CD && docker-compose down && docker-compose up -d'
                     def gitCmd1 = 'rm -rf Django-Notes-App-Ci-CD'
                     def gitCmd2 = 'git clone https://github.com/Ayush-K-Singh/Django-Notes-App-Ci-CD.git'
-                    sshagent(['ec2-server-key']) {
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.162.185 ${gitCmd1}"
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.162.185 ${gitCmd2}"
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@16.170.162.185 ${dockerCmd}"
+                    sshagent(['aws-keypair']) {
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@${AWS_EC2_PUBLIC_IP} ${gitCmd1}"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@${AWS_EC2_PUBLIC_IP} ${gitCmd2}"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@${AWS_EC2_PUBLIC_IP} ${dockerCmd}"
                     }
                 }
             }

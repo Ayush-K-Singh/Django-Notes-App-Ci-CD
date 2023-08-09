@@ -24,3 +24,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+id_rsa.pub
