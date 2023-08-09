@@ -126,12 +126,14 @@ resource "aws_instance" "deployment-ec2-instance" {
   associate_public_ip_address = true
   key_name = aws_key_pair.deployment-keypair.key_name
 
-  user_data = <<EOF
-                    #!/bin/bash
-                    sudo yum update -y && sudo yum install docker -y
-                    sudo systemctl start docker
-                    sudo usermod -aG docker ec2-user
-                EOF
+#   user_data = <<EOF
+#                     #!/bin/bash
+#                     sudo yum update -y && sudo yum install docker -y
+#                     sudo systemctl start docker
+#                     sudo usermod -aG docker ec2-user
+#                     sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#                     sudo chmod +x /usr/local/bin/docker-compose
+#                 EOF
 
   tags = {
     Name = "deployment-ec2-instance-cicd"
