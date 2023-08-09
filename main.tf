@@ -13,7 +13,7 @@ variable subnet_cidr_block {
 variable availability_zone {
     default = "eu-north-1a"
 }
-variable public_key_location {}
+# variable public_key_location {}
 
 resource "aws_vpc" "deployment-vpc" {
   cidr_block = var.vpc_cidr_block
