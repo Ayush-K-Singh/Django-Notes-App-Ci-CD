@@ -83,7 +83,7 @@ pipeline {
                     def dockerCmd = 'docker-compose --version'
                     def dockerCmd1 = 'cd Django-Notes-App-Ci-CD'
                     def dockerCmd11 = 'docker-compose -f Django-Notes-App-Ci-CD/docker-compose.yml down'
-                    def dockerCmd2 = 'cd Django-Notes-App-Ci-CD && docker-compose up -d'
+                    def dockerCmd2 = 'docker-compose -f Django-Notes-App-Ci-CD/docker-compose.yml up -d'
                     def gitCmd1 = 'rm -rf Django-Notes-App-Ci-CD'
                     def gitCmd2 = 'git clone https://github.com/Ayush-K-Singh/Django-Notes-App-Ci-CD.git'
                     sshagent(['aws-keypair']) {
