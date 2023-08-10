@@ -2,28 +2,13 @@ pipeline {
     agent any 
     
     stages{
-        // stage("Clone Code"){
-        //     steps {
-        //         echo "Cloning the code"
-        //         git url:"https://github.com/LondheShubham153/django-notes-app.git", branch: "main"
-        //     }
-        // }
         stage("Build"){
             steps {
                 echo "Building the image"
                 sh "docker build . -t django-notes-app"
             }
         }
-        // stage("Push"){
-        //     steps {
-        //         echo "Pushing the image to docker hub"
-        //         withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
-        //         sh "docker tag django-notes-app ${env.dockerHubUser}/django-notes-app:latest"
-        //         sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-        //         sh "docker push ${env.dockerHubUser}/my-note-app:latest"
-        //         }
-        //     }
-        // }
+
         stage('Push'){
             steps{
                 echo "Pushing the image to docker hub"
@@ -35,25 +20,13 @@ pipeline {
             }
         }
 
-
-
-
-
-
-
-        // stage("Deploy"){
-        //     steps {
-        //         echo "Deploying the container"
-        //         sh "docker-compose down && docker-compose up -d"
-                
-        //     }
-        // }
-        stage('provision'){
+        stage('Provision'){
             environment{
                 AWS_ACCESS_KEY_ID = credentials('jenkins_aws_access_key')
                 AWS_SECRET_ACCESS_ID = credentials('jenkins_aws_secret_key')
             }
             steps{
+                echo "Provisioning Infrastructure on AWS"
                 script{
                     sh "terraform init"
                     sh "terraform plan"
@@ -66,30 +39,20 @@ pipeline {
             }
         }
 
-
-
-        stage('deploy'){
+        stage('Deploy'){
             steps{
-
-
-
                 script{
-                    echo "Wait for instance"
+                    echo "Waiting for instance to get initialized"
                     sleep(90)
 
-                    echo "Started deploying"
+                    echo "Deploying application on the provisioned instance"
                     
-                    // def dockerCmd = 'docker run -d -p 9000:8000 ayushkrsingh/my-repository:django-notes-app'
-                    def dockerCmd = 'docker-compose --version'
-                    def dockerCmd1 = 'cd Django-Notes-App-Ci-CD'
-                    def dockerCmd11 = 'docker-compose -f Django-Notes-App-Ci-CD/docker-compose.yml down'
-                    def dockerCmd2 = 'docker-compose -f Django-Notes-App-Ci-CD/docker-compose.yml up -d'
+                    def dockerCmd1 = 'docker-compose -f Django-Notes-App-Ci-CD/docker-compose.yml down'
                     def gitCmd1 = 'rm -rf Django-Notes-App-Ci-CD'
                     def gitCmd2 = 'git clone https://github.com/Ayush-K-Singh/Django-Notes-App-Ci-CD.git'
+                    def dockerCmd2 = 'docker-compose -f Django-Notes-App-Ci-CD/docker-compose.yml up -d'
                     sshagent(['aws-keypair']) {
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@${AWS_EC2_PUBLIC_IP} ${dockerCmd}"
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@${AWS_EC2_PUBLIC_IP} ${dockerCmd1}"
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@${AWS_EC2_PUBLIC_IP} ${dockerCmd11}"
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@${AWS_EC2_PUBLIC_IP} ${gitCmd1}"
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@${AWS_EC2_PUBLIC_IP} ${gitCmd2}"
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@${AWS_EC2_PUBLIC_IP} ${dockerCmd2}"
